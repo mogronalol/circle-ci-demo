@@ -1,0 +1,16 @@
+machine:
+  services:
+    - docker
+
+test:
+  post:
+    - cp -Rf build/reports/ $CIRCLE_ARTIFACTS/
+
+deployment:
+  dev:
+    branch: master
+    commands:
+      - ./gradlew assemble -Dbuild.version=$CIRCLE_BUILD_NUM
+      - docker login -e andrewmorgan36@gmail.com -u mogronalol -p $DOCKER_PASS
+      - docker build -t mogronalol/circle-ci-demo:$BUILD_NUMBER .
+      - docker push mogronalol/circle-ci-demo:$BUILD_NUMBER
